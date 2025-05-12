@@ -1,6 +1,6 @@
 #include <sr_gui.h>
 
-#include "common/common.h"
+#include "common.h"
 
 #include <stdio.h>
 #include <stdlib.h>

@@ -1,5 +1,10 @@
 # sr_gui
 
+---
+
+- Check out [root repo.](https://github.com/kosua20/sr_gui)
+
+---
 This is a simple wrapper around graphical user interface (GUI) frameworks on Windows, macOS and Linux, along with a platform-independent command-line version. It respectively interacts with:
 
 * the common dialog and controls library on Windows (Windows 10 required for notifications)

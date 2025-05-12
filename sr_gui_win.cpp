@@ -17,7 +17,7 @@
 #	include <appmodel.h>
 #	include <wrl/wrappers/corewrappers.h>
 #	include <string>
-#   include <Shlobj.h>
+#	include <Shlobj.h>
 
 #	pragma comment(linker, "\"/manifestdependency:type='win32' \
 name='Microsoft.Windows.Common-Controls' version='6.0.0.0' \
@@ -42,7 +42,7 @@ void sr_gui_cleanup() {
 
 // Transfer output ownership to the caller.
 wchar_t* _sr_gui_widen_string(const char* str) {
-	if(str == NULL){
+	if(str == NULL) {
 		return NULL;
 	}
 	const int sizeWide = MultiByteToWideChar(CP_UTF8, 0, str, -1, NULL, 0);
@@ -53,7 +53,7 @@ wchar_t* _sr_gui_widen_string(const char* str) {
 
 // Transfer output ownership to the caller.
 char* _sr_gui_narrow_string(const wchar_t* wstr) {
-	if(wstr == NULL){
+	if(wstr == NULL) {
 		return NULL;
 	}
 	const int sizeNarrow = WideCharToMultiByte(CP_UTF8, 0, wstr, -1, NULL, 0, NULL, NULL);
@@ -64,12 +64,12 @@ char* _sr_gui_narrow_string(const wchar_t* wstr) {
 
 // Modify in place
 void _sr_gui_convert_path_separators(wchar_t* str) {
-	if(str == NULL){
+	if(str == NULL) {
 		return;
 	}
 	const size_t len = wcslen(str);
-	for( size_t i = 0; i < len; ++i ){
-		if( str[ i ] == L'/' ){
+	for(size_t i = 0; i < len; ++i) {
+		if(str[i] == L'/') {
 			str[i] = L'\\';
 		}
 	}
@@ -206,7 +206,7 @@ void sr_gui_show_notification(const char* title, const char* message) {
 	}
 
 	// Create the notification template
-	WCHAR* templateBase			   = L"<toast><visual><binding template='ToastGeneric'><text>%s</text><text>%s</text></binding></visual></toast>";
+	const WCHAR* templateBase			   = L"<toast><visual><binding template='ToastGeneric'><text>%s</text><text>%s</text></binding></visual></toast>";
 	WCHAR* titleW				   = _sr_gui_widen_string(title ? title : SR_GUI_APP_NAME);
 	WCHAR* messageW				   = _sr_gui_widen_string(message ? message : "");
 	const size_t templateTotalSize = wcslen(templateBase) + wcslen(titleW) + wcslen(messageW) + 1;
@@ -407,7 +407,7 @@ int sr_gui_ask_directory(const char* title, const char* startDir, char** outPath
 }
 
 int sr_gui_ask_load_files(const char* title, const char* startDir, const char* exts, char*** outPaths, int* outCount) {
-	if(!outCount  || !outPaths) {
+	if(!outCount || !outPaths) {
 		return SR_GUI_CANCELLED;
 	}
 	*outCount = 0;
@@ -542,7 +542,7 @@ int sr_gui_ask_load_file(const char* title, const char* startDir, const char* ex
 		dialog->Release();
 		return SR_GUI_CANCELLED;
 	}
-	
+
 	IShellItem* selectedItem = nullptr;
 	res						 = dialog->GetResult(&selectedItem);
 	dialog->Release();
@@ -628,15 +628,15 @@ int sr_gui_ask_choice(const char* title, const char* message, int level, const c
 	WCHAR* button2W = _sr_gui_widen_string(button2);
 
 	WCHAR* buttons[] = {button0W, button1W, button2W};
-	const int bCount = sizeof(buttons)/sizeof(buttons[0]);
+	const int bCount = sizeof(buttons) / sizeof(buttons[0]);
 
 	TASKDIALOG_BUTTON winButtons[3];
 	int localIndex = 0;
 
 	// We allow some labels to be null, and should skip them while preserving the returned index.
 	// (pressing button2 should always return 2 even if button1 == NULL)
-	for(int bid = 0; bid < bCount; ++bid){
-		if(buttons[bid] == NULL){
+	for(int bid = 0; bid < bCount; ++bid) {
+		if(buttons[bid] == NULL) {
 			continue;
 		}
 		winButtons[localIndex] = {SR_GUI_BUTTON0 + bid, buttons[bid]};
@@ -675,7 +675,7 @@ int sr_gui_ask_choice(const char* title, const char* message, int level, const c
 		return SR_GUI_CANCELLED;
 	}
 
-	for(int bid = 0; bid < bCount; ++bid){
+	for(int bid = 0; bid < bCount; ++bid) {
 		if(buttons[bid] != NULL && ((SR_GUI_BUTTON0 + bid) == button)) {
 			return SR_GUI_BUTTON0 + bid;
 		}
@@ -745,14 +745,14 @@ int sr_gui_ask_string(const char* title, const char* message, char** result) {
 	messageW[messageSize + 2] = '\0';
 	SR_GUI_FREE(messageWTemp);
 
-	WCHAR* titleW		  = _sr_gui_widen_string(title ? title : SR_GUI_APP_NAME);
-	WCHAR* dfltValue	  = _sr_gui_widen_string(*result ? *result : "Default value");
-	*result				  = NULL;
+	WCHAR* titleW	 = _sr_gui_widen_string(title ? title : SR_GUI_APP_NAME);
+	WCHAR* dfltValue = _sr_gui_widen_string(*result ? *result : "Default value");
+	*result			 = NULL;
 
 	char* content = NULL;
 	_sr_gui_message_callback_data callData;
-	callData.content	    = &content;
-	callData.defaultString	= dfltValue;
+	callData.content	   = &content;
+	callData.defaultString = dfltValue;
 
 	TASKDIALOGCONFIG dialog	  = {0};
 	dialog.cbSize			  = sizeof(TASKDIALOGCONFIG);
@@ -777,8 +777,8 @@ int sr_gui_ask_string(const char* title, const char* message, char** result) {
 	return (SUCCEEDED(res) && (button == IDOK)) ? SR_GUI_VALIDATED : SR_GUI_CANCELLED;
 }
 
-#define _SR_GUI_COLOR_FIELD (4687913)
-#define _SR_GUI_COLOR_LABEL (_SR_GUI_COLOR_FIELD + 1)
+#	define _SR_GUI_COLOR_FIELD (4687913)
+#	define _SR_GUI_COLOR_LABEL (_SR_GUI_COLOR_FIELD + 1)
 
 struct _sr_gui_color_callback_data {
 	HWND label;
@@ -790,7 +790,6 @@ struct _sr_gui_color_callback_data {
 
 UINT_PTR _sr_gui_color_callback(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 
-	
 	if(msg == WM_INITDIALOG) {
 
 		CHOOSECOLOR* chooseColor = (CHOOSECOLOR*)(lParam);
@@ -810,21 +809,21 @@ UINT_PTR _sr_gui_color_callback(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPara
 		}
 		int wNew = w + 120;
 		MoveWindow(hwnd, winSize.left, winSize.top, wNew, h, TRUE);
-	
-		data->label = CreateWindowEx(WS_EX_NOPARENTNOTIFY | 0x800, L"STATIC", L"Alpha :", 
-			SS_RIGHT | WS_GROUP | WS_CHILD | WS_VISIBLE, 648, 315, 65, 23, 
+
+		data->label = CreateWindowEx(WS_EX_NOPARENTNOTIFY | 0x800, L"STATIC", L"Alpha :",
+			SS_RIGHT | WS_GROUP | WS_CHILD | WS_VISIBLE, 648, 315, 65, 23,
 			hwnd, (HMENU)_SR_GUI_COLOR_LABEL, NULL, NULL);
-		data->field = CreateWindowEx(WS_EX_NOPARENTNOTIFY | 0x800 | WS_EX_CLIENTEDGE, L"EDIT", NULL, 
-			WS_TABSTOP | WS_GROUP | WS_CHILD | WS_VISIBLE | ES_NUMBER, 648 + 65 + 4, 315 - 5, 41, 30, 
+		data->field = CreateWindowEx(WS_EX_NOPARENTNOTIFY | 0x800 | WS_EX_CLIENTEDGE, L"EDIT", NULL,
+			WS_TABSTOP | WS_GROUP | WS_CHILD | WS_VISIBLE | ES_NUMBER, 648 + 65 + 4, 315 - 5, 41, 30,
 			hwnd, (HMENU)_SR_GUI_COLOR_FIELD, NULL, NULL);
-		
+
 		HDC context	   = GetDC(hwnd);
 		INT fontHeight = MulDiv(10, GetDeviceCaps(context, LOGPIXELSY), 72);
 		data->font	   = CreateFont(fontHeight, 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY, DEFAULT_PITCH | FF_DONTCARE, TEXT("MS Shell Dlg"));
 		SendMessage(data->field, WM_SETFONT, (WPARAM)(data->font), TRUE);
 		SendMessage(data->label, WM_SETFONT, (WPARAM)(data->font), TRUE);
 		SendMessage(data->field, WM_SETTEXT, NULL, (LPARAM)(data->defaultString));
-	
+
 	} else if(msg == _sr_gui_colorOK_msg) {
 
 		CHOOSECOLOR* chooseColor = (CHOOSECOLOR*)(lParam);
@@ -849,19 +848,31 @@ int _sr_gui_ask_color(unsigned char color[4], bool askAlpha) {
 		return SR_GUI_CANCELLED;
 	}
 	DWORD colorD = RGB(color[0], color[1], color[2]);
-	_sr_gui_color_callback_data callData{};
+	_sr_gui_color_callback_data callData {};
 	if(askAlpha) {
 		callData.alpha				 = color[3];
 		const std::string defaultStr = std::to_string(color[3]);
 		callData.defaultString		 = _sr_gui_widen_string(defaultStr.c_str());
 	}
-	
+
 	// Preserve palette of favorite colors between calls.
 	static COLORREF acrCustClr[16] = {
-		0x00000000,0x00FF0000,0x0000FF00,0x000000FF,
-		0x00FFFF00,0x00FF00FF,0x0000FFFF,0x00FFFFFF,
-		0x00FF7700,0x00FF0077,0x0077FF00,0x0000FF77,
-		0x007700FF,0x000077FF,0x00777777,0x00000000,
+		0x00000000,
+		0x00FF0000,
+		0x0000FF00,
+		0x000000FF,
+		0x00FFFF00,
+		0x00FF00FF,
+		0x0000FFFF,
+		0x00FFFFFF,
+		0x00FF7700,
+		0x00FF0077,
+		0x0077FF00,
+		0x0000FF77,
+		0x007700FF,
+		0x000077FF,
+		0x00777777,
+		0x00000000,
 	};
 	CHOOSECOLOR colorSettings;
 	memset(&colorSettings, 0, sizeof(CHOOSECOLOR));
@@ -902,7 +913,7 @@ int sr_gui_ask_color_rgb(unsigned char color[3]) {
 		return SR_GUI_CANCELLED;
 	}
 
-	unsigned char colorTmp[4] = { color[0], color[1], color[2], 255 };
+	unsigned char colorTmp[4] = {color[0], color[1], color[2], 255};
 	int res					  = _sr_gui_ask_color(colorTmp, false);
 	if(res == SR_GUI_VALIDATED) {
 		color[0] = colorTmp[0];
@@ -912,49 +923,49 @@ int sr_gui_ask_color_rgb(unsigned char color[3]) {
 	return res;
 }
 
-int sr_gui_open_in_explorer(const char* path){
-	if(!path){
+int sr_gui_open_in_explorer(const char* path) {
+	if(!path) {
 		return SR_GUI_CANCELLED;
 	}
 	WCHAR* pathW = _sr_gui_widen_string(path);
 	_sr_gui_convert_path_separators(pathW);
 
-	bool done = false;
+	bool done			  = false;
 	IShellFolder* desktop = NULL;
-	HRESULT hr = SHGetDesktopFolder(&desktop);
-	if (!FAILED(hr)) {
+	HRESULT hr			  = SHGetDesktopFolder(&desktop);
+	if(!FAILED(hr)) {
 		LPITEMIDLIST file_item = NULL;
-		hr = desktop->ParseDisplayName(NULL, NULL, pathW, NULL, &file_item, NULL);
-		if (!FAILED(hr)) {
-			hr = SHOpenFolderAndSelectItems(file_item, 0, NULL, NULL);
+		hr					   = desktop->ParseDisplayName(NULL, NULL, pathW, NULL, &file_item, NULL);
+		if(!FAILED(hr)) {
+			hr	 = SHOpenFolderAndSelectItems(file_item, 0, NULL, NULL);
 			done = !FAILED(hr);
 		}
-		if (file_item) {
+		if(file_item) {
 			CoTaskMemFree(file_item);
 		}
 	}
-	if (desktop) {
+	if(desktop) {
 		desktop->Release();
 	}
-	if (!done) {
+	if(!done) {
 		// Open parent directory using shell.
 		// Extract prefix path by finding the last separator.
 		wchar_t* tail = wcsrchr(pathW, '\\');
-		if (tail == NULL) {
+		if(tail == NULL) {
 			tail = wcsrchr(pathW, '/');
 		}
-		if (tail) {
+		if(tail) {
 			*tail = '\0';
 		}
 		ShellExecute(NULL, L"open", pathW, NULL, NULL, SW_SHOW);
 	}
-	
+
 	SR_GUI_FREE(pathW);
 	return SR_GUI_VALIDATED;
 }
 
-int sr_gui_open_in_default_app(const char* path){
-	if(!path){
+int sr_gui_open_in_default_app(const char* path) {
+	if(!path) {
 		return SR_GUI_CANCELLED;
 	}
 	WCHAR* pathW = _sr_gui_widen_string(path);
@@ -964,8 +975,8 @@ int sr_gui_open_in_default_app(const char* path){
 	return SR_GUI_VALIDATED;
 }
 
-int sr_gui_open_in_browser(const char* url){
-	if(!url){
+int sr_gui_open_in_browser(const char* url) {
+	if(!url) {
 		return SR_GUI_CANCELLED;
 	}
 	WCHAR* urlW = _sr_gui_widen_string(url);
@@ -997,12 +1008,12 @@ int sr_gui_get_app_data_path(char** outPath) {
 	if((strSize != 0) && (oldOutPath[strSize - 1] != '\\')) {
 		// New copy of outPath will be used.
 		*outPath = (char*)SR_GUI_MALLOC((strSize + 2) * sizeof(char));
-		if(*outPath == NULL){
+		if(*outPath == NULL) {
 			SR_GUI_FREE(oldOutPath);
 			return SR_GUI_CANCELLED;
 		}
 		SR_GUI_MEMCPY(*outPath, oldOutPath, strSize * sizeof(char));
-		(*outPath)[strSize]	  = '\\';
+		(*outPath)[strSize]		= '\\';
 		(*outPath)[strSize + 1] = '\0';
 		SR_GUI_FREE(oldOutPath);
 	}
